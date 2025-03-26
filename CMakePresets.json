@@ -2,8 +2,8 @@
     "version": 6,
     "configurePresets": [
         {
-            "name": "gcc",
-            "displayName": "gcc build",
+            "name": "gcc-multi",
+            "displayName": "GCC Multi-Config",
             "generator": "Ninja Multi-Config",
             "binaryDir": "${sourceDir}/out/build/gcc",
             "cacheVariables": {
@@ -17,8 +17,8 @@
             }
         },
         {
-            "name": "llvm",
-            "displayName": "llvm build",
+            "name": "llvm-multi",
+            "displayName": "LLVM Multi-Config",
             "generator": "Ninja Multi-Config",
             "binaryDir": "${sourceDir}/out/build/llvm",
             "cacheVariables": {
@@ -30,6 +30,26 @@
                 "lhs": "${hostSystemName}",
                 "rhs": "Darwin"
             }
-        } 
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "gcc-debug",
+            "displayName": "GCC Debug Build",
+            "configurePreset": "gcc-multi",
+            "configuration": "Debug"
+        },
+        {
+            "name": "gcc-rel-with-deb-info",
+            "displayName": "GCC RelWithDebInfo Build",
+            "configurePreset": "gcc-multi",
+            "configuration": "RelWithDebInfo"
+        },
+        {
+            "name": "gcc-release",
+            "displayName": "GCC Release Build",
+            "configurePreset": "gcc-multi",
+            "configuration": "Release"
+        }
     ]
 }
