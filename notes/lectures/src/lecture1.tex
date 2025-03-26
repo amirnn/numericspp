@@ -14,16 +14,16 @@
     \item Tools for confirming that the math behind these algorithms works.
 \end{itemize}
 
-\section*{Example: Solve Nonlinear Equations}
+\subsection*{Example: Solve Nonlinear Equations}
 We want to find a solution $x^*$ of $f(x^*) = 0$, for some function $f: \mathbb{R} \to \mathbb{R}$.
 
-\subsubsection*{Bisection Method (Naive Approach)}
+\subsection*{Bisection Method (Naive Approach)}
 \begin{itemize}
     \item If $f(a)$ and $f(b)$ have opposite signs, then there is a root in $[a, b]$.
     \item Keep bisecting the interval until its length is sufficiently small.
 \end{itemize}
 
-\subsubsection*{Secant Method (Faster Alternative)}
+\subsection*{Secant Method (Faster Alternative)}
 \begin{enumerate}
     \item Approximate $f(x)$ near $x_n$ by a straight line, using $f(x_n)$ and $f(x_{n-1})$.
     \item Solve that linear approximation $f(x) \approx 0$ for $x$ to get $x_{n+1}$.
@@ -67,11 +67,9 @@ We deal with:
     leading to large eigenvalue problems when discretized.
 \end{itemize}
 
-\section*{Outline}
+\subsection*{Outline}
 \begin{itemize}
     \item Fundamentals of numerical linear algebra (condition numbers, stability, efficiency, etc.)
     \item Nonlinear optimization
     \item Other topics: numerical integration, FFT, etc.
 \end{itemize}
-
-\end{document}

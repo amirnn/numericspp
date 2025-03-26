@@ -1,6 +1,6 @@
-\subsection*{Fundamentals of Numerical Analysis}
+\section{Fundamentals of Numerical Analysis}
 
-\textbf{Today:} Floating-point arithmetic and backward error analysis. \\
+\textbf{Today:} Floating-point arithmetic and backward error analysis.  
 (\textit{Also a brief review/overview of numerical linear algebra (NLA).})
 
 \subsection*{Motivation}
@@ -30,7 +30,7 @@ Mimic scientific notation:
 \[
 x \;=\; \pm \, m \times B^e,
 \]
-where $B$ is the \emph{base} (commonly $2$ on binary computers), $m$ (mantissa) satisfies $1 \le m < B$ (for normalized representation), and $e$ is an integer within some finite exponent range $[e_{\min},\, e_{\max}]$.
+where $B$ is the \emph{base} (commonly $2$ on binary computers), $m$ (mantissa) satisfies $1 \le m < B$ (for normalized representation), and $e$ is an integer in a finite range $[e_{\min},\, e_{\max}]$.
 
 \subsection*{IEEE Floating-Point (Examples)}
 
@@ -59,9 +59,8 @@ x \;*_{\mathrm{fl}}\; y \;=\; \mathrm{fl}(x * y) \;=\; (x * y)\,\bigl(1 + \delta
 |\delta| \le \varepsilon_{\mathrm{mach}}.
 \]
 This standard model implies:
-
 \begin{itemize}
-    \item Rounding is non-associative:
+    \item Rounding is \emph{non-associative}:
     \[
       (x + y) + z \;\neq\; x + (y + z).
     \]
@@ -78,12 +77,12 @@ S_1 = \mathrm{fl}(u_1 v_1), \quad
 S_2 = \mathrm{fl}\bigl(S_1 + \mathrm{fl}(u_2 v_2)\bigr), \;\dots,\;
 S_n = \mathrm{fl}\bigl(S_{n-1} + \mathrm{fl}(u_n v_n)\bigr).
 \]
-Each operation introduces a factor of $(1 + \delta_i)$, with $|\delta_i| \le \varepsilon_{\mathrm{mach}}$. Summing up $n$ times yields a worst-case error on the order of $n\,\varepsilon_{\mathrm{mach}}$.
+Each operation introduces a factor of $(1 + \delta_i)$, with $|\delta_i| \le \varepsilon_{\mathrm{mach}}$. Summing $n$ times yields a worst-case error on the order of $n\,\varepsilon_{\mathrm{mach}}$.
 
 \begin{itemize}
     \item By a standard lemma, the final result satisfies:
     \[
-      S_n = \bigl(u^T v\bigr)\,\bigl(1 + \theta_n\bigr), 
+      S_n = \bigl(u^T v\bigr)\,\bigl(1 + \theta_n\bigr),
       \quad
       |\theta_n| \le (n-1)\,\varepsilon_{\mathrm{mach}}.
     \]
@@ -101,48 +100,46 @@ Each operation introduces a factor of $(1 + \delta_i)$, with $|\delta_i| \le \va
 \[
 \text{Relative forward error} = \frac{\|\widetilde{x} - x^*\|}{\|x^*\|}, 
 \quad
-\text{Relative backward error} = \min \bigl\{\epsilon : \widetilde{x} \text{ solves } f(x+\Delta x)\text{ for }\|\Delta x\|\le \epsilon \|x\|\bigr\}.
+\text{Relative backward error} 
+= \min \bigl\{\epsilon : \widetilde{x} \text{ solves } f(x+\Delta x)\text{ for }\|\Delta x\|\le \epsilon \|x\|\bigr\}.
 \]
 
 \noindent
-\textbf{Backward Stable:} $\widetilde{x}$ is the exact solution to a perturbed problem with $\|\Delta x\|$ on the order of $\varepsilon_{\mathrm{mach}}$. If the problem is well-conditioned, backward stability implies a small forward error.
+\textbf{Backward Stable:} $\widetilde{x}$ is the exact solution to a perturbed problem with $\|\Delta x\|$ on the order of $\varepsilon_{\mathrm{mach}}$. If the problem is well-conditioned, backward stability implies small forward error.
 
 \section*{Examples}
 
 \begin{itemize}
-    \item \textbf{Inner product} is backward stable: 
+    \item \textbf{Inner product} is backward stable:
     \[
       \mathrm{fl}(u^T v) = u^T v + \Delta (u^T v),
       \quad
-      \|\Delta (u^T v)\| \le \mathrm{(small)} \times \|u^T v\|.
+      \|\Delta (u^T v)\| \le \text{(small)} \times \|u^T v\|.
     \]
     \item \textbf{Outer product} is also backward stable (exercise).
 \end{itemize}
 
 \section*{Why Backward Stability Implies Numerical Stability}
 
-If the backward error is small (i.e., the algorithm solves a nearby problem \emph{exactly}), and if $f$ is well-conditioned, then the forward error is also small. 
+If the backward error is small (i.e., the algorithm solves a nearby problem exactly) and $f$ is well-conditioned, the forward error is also small. 
 
 \begin{itemize}
-    \item \emph{Forward Error} $\le \; \text{(Condition Number)} \times \text{(Backward Error)}.$
+    \item \emph{Forward Error} $\;\le\;\; (\text{Condition Number}) \;\times\; (\text{Backward Error}).$
 \end{itemize}
 
 \section*{Condition Number (Refresher)}
 
-For a function $f$ or a matrix problem $A x = b$,
+For a function $f$ or a matrix equation $Ax = b$,
 \[
-\kappa \;=\; \|A\| \,\|A^{-1}\|\quad
-\text{(for linear problems in some consistent norm).}
+\kappa \;=\; \|A\|\;\|A^{-1}\|,
 \]
-Large $\kappa$ indicates sensitivity (ill-conditioning): small input changes can cause large output changes.
+using a consistent norm. A large $\kappa$ indicates sensitivity (ill-conditioning): small input changes cause large output changes.
 
 \section*{Summary of Lecture 2}
 
 \begin{itemize}
     \item Floating-point arithmetic has finite precision and introduces rounding errors.
-    \item Catastrophic cancellation is a major concern when subtracting nearly equal numbers.
-    \item Backward error analysis helps us determine if an algorithm is effectively solving a nearby (perturbed) problem exactly.
+    \item Catastrophic cancellation arises from subtracting nearly equal numbers.
+    \item Backward error analysis checks whether the computed solution solves a \emph{slightly} perturbed problem exactly.
     \item Well-conditioned problems + backward-stable algorithms $\implies$ small forward error.
 \end{itemize}
-
-\end{document}

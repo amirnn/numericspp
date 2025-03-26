@@ -1,22 +1,26 @@
-\subsection*{Overview}
+\section{Overview}
 
 This lecture continues the discussion of floating-point arithmetic, error analysis (especially catastrophic cancellation), and the concepts of backward and forward errors in numerical computations.
 
-\section*{Catastrophic Cancellation}
+\section{Catastrophic Cancellation}
 
 \noindent
 \textbf{Key Issue:} Subtracting two nearly equal numbers can cancel out the most significant digits, resulting in a large relative error.
 
-\subsection*{Example Problem}
+\subsection{Example Problem}
 
-Evaluate $\displaystyle \frac{4}{4 - x} - \frac{4}{4 + x}$ for $x$ close to $0$.
+Evaluate
+\[
+\frac{4}{4 - x} - \frac{4}{4 + x}
+\]
+for $x$ close to $0$.
 
 \begin{itemize}
   \item \textbf{Method 1: Direct Evaluation.}
   \[
     S_1 = \mathrm{fl}\Bigl(\frac{4}{4 - x}\Bigr) - \mathrm{fl}\Bigl(\frac{4}{4 + x}\Bigr).
   \]
-  Each division and subtraction can introduce floating-point errors $(1 + \delta_i)$. When $x$ is small, the two terms are nearly equal and result in a potentially large relative error.
+  Each division and subtraction can introduce floating-point errors $(1 + \delta_i)$. When $x$ is small, the two terms are nearly equal and can yield a large relative error.
 
   \item \textbf{Method 2: Re-arrange Calculation.}
   \[
@@ -24,28 +28,31 @@ Evaluate $\displaystyle \frac{4}{4 - x} - \frac{4}{4 + x}$ for $x$ close to $0$.
     = \frac{4(4 + x) - 4(4 - x)}{(4 - x)(4 + x)}
     = \frac{8x}{16 - x^2}.
   \]
-  This form is often more accurate for $x$ near $0$, avoiding subtracting nearly equal quantities. This rearrangement leads to smaller relative error.
+  This form is often more accurate for $x$ near $0$, avoiding subtracting nearly equal quantities, and thus reducing the relative error.
 \end{itemize}
 
-\section*{Another Example: Exponential and Logarithms}
+\subsection{Another Example: Exponential and Logarithms}
 
-Let us consider evaluating $\displaystyle e^{a+x} - e^a$. If $x$ is very small, a direct approach might lead to catastrophic cancellation.
+Let us consider evaluating \(\displaystyle e^{a+x} - e^a\). If \(x\) is very small, a direct approach might suffer catastrophic cancellation.
 
 \begin{itemize}
   \item \textbf{Method 1: Direct Evaluation.}
   \[
-    \mathrm{Output}_1 = \mathrm{fl}\bigl(e^{a+x}\bigr) - \mathrm{fl}\bigl(e^a\bigr).
+    \mathrm{Output}_1 
+    = \mathrm{fl}\bigl(e^{a+x}\bigr) 
+      - \mathrm{fl}\bigl(e^a\bigr).
   \]
-  Potentially large relative error if $e^{a+x} \approx e^a$.
+  Potentially large relative error if \(e^{a+x} \approx e^a\).
 
   \item \textbf{Method 2: Factor and Re-arrange.}
   \[
-    e^{a+x} - e^a = e^a \bigl(e^x - 1\bigr).
+    e^{a+x} - e^a 
+    = e^a \bigl(e^x - 1\bigr).
   \]
-  Then compute $e^x - 1$ carefully using, e.g., series expansions or specialized library calls that reduce loss of significant digits when $x$ is small.  
+  Then compute \(e^x - 1\) carefully (using series expansions or a special library call) to avoid losing significant digits when \(x\) is small.
 \end{itemize}
 
-\section*{Backward and Forward Error Review}
+\section{Backward and Forward Error Review}
 
 Recall from previous lectures:
 
@@ -55,81 +62,83 @@ Recall from previous lectures:
 \]
 \[
 \text{Relative backward error}
-= \min\Bigl\{ \epsilon : \mathrm{fl}(x) \text{ is the exact solution of } f(x+\Delta x) \text{ for some } \|\Delta x\| \le \epsilon \|x\|\Bigr\}.
+= \min\Bigl\{ \epsilon : \mathrm{fl}(x) 
+   \text{ is the exact solution of } f(x+\Delta x) 
+   \text{ for some } \|\Delta x\| \le \epsilon \|x\|\Bigr\}.
 \]
 
-\subsection*{Stability Definitions}
+\subsection{Stability Definitions}
 
 \begin{itemize}
-    \item \textbf{Backward stable:} If $\mathrm{fl}(x)$ is the \emph{exact} solution for a slightly perturbed problem. Formally, $\exists\,\Delta x \text{ with } \|\Delta x\| = O(\varepsilon_{\mathrm{mach}}) \|x\|\text{ such that } F(x+\Delta x) = F_{\mathrm{computed}}.$
-    \item \textbf{Numerically stable:} If $\mathrm{fl}(x)$ is close in forward error to the true solution. Often implied by backward stability when the problem is well-conditioned.
+    \item \textbf{Backward stable:} If \(\mathrm{fl}(x)\) is the exact solution for a slightly perturbed problem. Formally, \(\exists\,\Delta x\) with \(\|\Delta x\| = O(\varepsilon_{\mathrm{mach}})\,\|x\|\) such that \(F(x+\Delta x) = F_{\mathrm{computed}}\).
+    \item \textbf{Numerically stable:} If \(\mathrm{fl}(x)\) is close in forward error to the true solution. Often implied by backward stability when the problem is well-conditioned.
 \end{itemize}
 
-Examples mentioned:
+Examples:
 \begin{itemize}
     \item \textbf{Inner product} is backward stable under standard floating-point summation.
     \item \textbf{Outer product} is also backward stable (exercise).
 \end{itemize}
 
-\section*{Condition Number}
+\section{Condition Number}
 
 \noindent
-The condition number $\kappa$ measures how input perturbations affect the output. For a function $f(\cdot)$ (differentiable), define
+The condition number \(\kappa\) measures how input perturbations affect the output. For a function \(f(\cdot)\) (differentiable),
 \[
-\kappa = \sup_{\Delta x} \frac{\|Df(x)\,\Delta x\|}{\|f(x)\|} \cdot \frac{\|x\|}{\|\Delta x\|},
+\kappa = \sup_{\Delta x} \frac{\|Df(x)\,\Delta x\|}{\|f(x)\|} 
+         \cdot \frac{\|x\|}{\|\Delta x\|},
 \]
-or more simply (for linear problems $f(x)=Ax$):
+or more simply (for linear problems \(f(x)=Ax\)):
 \[
-\kappa(A) = \|A\|\,\|A^{-1}\|.
+\kappa(A) = \|A\| \,\|A^{-1}\|.
 \]
-A high condition number indicates a more sensitive or ill-conditioned problem, where small changes in input can cause large changes in output.
+A high condition number indicates an ill-conditioned (sensitive) problem where small changes in input lead to large changes in output.
 
-\section*{Vector and Matrix Norms}
+\section{Vector and Matrix Norms}
 
-To measure errors, we use norms (particularly subordinate norms). For a vector $x\in \mathbb{R}^n$:
-
+We use norms to measure errors, especially \emph{subordinate norms}:
 \begin{itemize}
-    \item $\|x\|_1 = \sum_i |x_i|$,
-    \item $\|x\|_2 = \sqrt{\sum_i |x_i|^2}$,
-    \item $\|x\|_\infty = \max_i |x_i|$.
+    \item For \(x \in \mathbb{R}^n\):
+      \(\|x\|_1 = \sum_i |x_i|,\; 
+        \|x\|_2 = \sqrt{\sum_i |x_i|^2},\; 
+        \|x\|_\infty = \max_i |x_i|\).
+    \item For \(A \in \mathbb{R}^{m \times n}\) in a consistent norm,
+      \(\|A\| = \sup_{x \neq 0} \frac{\|Ax\|}{\|x\|}.\)
 \end{itemize}
 
-For matrices, a consistent (subordinate) norm $\|A\| = \sup_{x\neq 0} \frac{\|Ax\|}{\|x\|}.$
-
-\subsection*{Examples}
+\subsection{Examples of Matrix Norms}
 \begin{itemize}
-    \item $\|A\|_1 = \max_{j} \sum_i |a_{ij}|$, (max column sum).
-    \item $\|A\|_\infty = \max_{i} \sum_j |a_{ij}|$, (max row sum).
-    \item $\|A\|_2 = \sqrt{\lambda_{\max}(A^TA)}$, (spectral norm).
-    \item $\|A\|_F = \sqrt{\sum_{i,j} |a_{ij}|^2}$, (Frobenius norm).
+    \item \(\|A\|_1 = \max_{j} \sum_i |a_{ij}|\) (max column sum).
+    \item \(\|A\|_\infty = \max_{i} \sum_j |a_{ij}|\) (max row sum).
+    \item \(\|A\|_2 = \sqrt{\lambda_{\max}(A^T A)}\) (spectral norm).
+    \item \(\|A\|_F = \sqrt{\sum_{i,j} |a_{ij}|^2}\) (Frobenius norm).
 \end{itemize}
 
-\section*{Combining Condition and Stability}
+\section{Combining Condition and Stability}
 
-\subsection*{Forward Error Bound}
-For a backward stable algorithm on a well-conditioned problem $f$, the forward error is typically:
+\subsection{Forward Error Bound}
+
+For a backward stable algorithm on a well-conditioned problem,
 \[
-\|\mathrm{fl}(x) - x_{\mathrm{exact}}\| \;\le\; \kappa \,\times\, (\text{small backward error}).
+\|\mathrm{fl}(x) - x_{\mathrm{exact}}\| 
+\;\le\; \kappa \,\times\, (\text{small backward error}).
 \]
+Hence, \emph{backward error} plus \emph{condition number} gives a \emph{forward error} estimate.
 
-Hence, **backward error** plus **condition number** yields a **forward error** estimate.
+\section{Differentiable Functions \& Jacobians}
 
-\section*{Differentiable Functions \& Jacobians}
-
-If $f:\mathbb{R}^n \to \mathbb{R}^n$ is differentiable, with Jacobian $Df(x)$, we approximate:
+If \(f:\mathbb{R}^n \to \mathbb{R}^n\) is differentiable, with Jacobian \(Df(x)\):
 \[
 f(x + \Delta x) \approx f(x) + Df(x)\,\Delta x.
 \]
-Thus, a small $\|\Delta x\|$ can yield a large $\|Df(x)\,\Delta x\|$ if $\|Df(x)\|$ is large, signifying ill-conditioning.
+A small \(\|\Delta x\|\) can produce a large \(\|Df(x)\,\Delta x\|\) if \(\|Df(x)\|\) is large, implying ill-conditioning.
 
-\section*{Summary}
+\section{Summary}
 
 \begin{itemize}
-    \item Catastrophic cancellation arises when subtracting nearly equal numbers, which can lead to large relative errors.
-    \item Rewriting expressions (e.g., factoring out common terms) helps mitigate significant digit loss.
-    \item Backward stability: the computed result solves a slightly perturbed version of the original problem \emph{exactly}.
-    \item Forward error relates to both backward error and the condition number of the underlying problem.
-    \item Norms and condition numbers help us quantify how small input changes can affect the output.
+    \item Catastrophic cancellation arises when subtracting nearly equal numbers.
+    \item Rewriting expressions (e.g., factoring common terms) mitigates significant digit loss.
+    \item Backward stability: the computed result solves a slightly perturbed original problem \emph{exactly}.
+    \item Forward error depends on both backward error and problem conditioning.
+    \item Norms and condition numbers help quantify sensitivity to small input changes.
 \end{itemize}
-
-\end{document}

@@ -10,6 +10,7 @@ add_latex_document(main.tex
     src/lecture1.tex
     src/lecture2.tex
     src/lecture3.tex
+    src/lecture4.tex
 )
 # add_latex_document()
 # add_latex_document()

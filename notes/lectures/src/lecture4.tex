@@ -1,0 +1,127 @@
+\section{Lecture 4 Notes (Typed Version)}
+
+\subsection*{Condition Number and Sensitivity (Review)}
+
+Last time, we introduced the condition number $K(A)$ for a matrix $A$. For $Ax = b$ (with $A$ invertible), a backward-stable algorithm satisfies
+\[
+\widetilde{x} = A^{-1}(b + \Delta b),
+\quad
+\|\Delta b\| \le O(\varepsilon_{\mathrm{mach}})\,\|b\|.
+\]
+To analyze forward error, we introduce
+\[
+K(A) \;=\; \|A\|\;\|A^{-1}\|.
+\]
+This $K(A)$ bounds how sensitive the solution is to changes in $b$. (We typically use a norm-independent definition or a consistent matrix norm.)
+
+\subsection*{Properties of \texorpdfstring{$K(A)$}{K(A)}}
+
+\begin{itemize}
+    \item If $A$ is invertible, then $K(A) \ge 1$. Also, $K(A) = K(A^{-1})$.
+    \item If $A$ is normal with eigenvalues $\lambda_i$, then
+          \[
+          K(A) = \frac{\max_i |\lambda_i|}{\min_i |\lambda_i|}.
+          \]
+          For a general (non-normal) $A$, we still have
+          \[
+          K(A) = \|A\|\;\|A^{-1}\|.
+          \]
+\end{itemize}
+
+\subsection*{Forward Error Theorem (Sketch)}
+
+Consider $Ax = b$ with residual $r = b - A x$.
+
+\begin{quote}
+\textbf{Theorem.}  
+If an algorithm is backward stable (i.e., solves $A(x + \Delta x) = b + \Delta b$ with small relative $\|\Delta b\|/\|b\|$), then
+\[
+\frac{\|x - x_{\mathrm{exact}}\|}{\|x_{\mathrm{exact}}\|} 
+\;\le\; K(A)\,\frac{\|\Delta b\|}{\|b\|}.
+\]
+\end{quote}
+
+Thus, a large $K(A)$ (ill-conditioned) means even a small backward error may produce large forward error in $x$.
+
+\subsection*{Perturbations in \texorpdfstring{$A$}{A} and \texorpdfstring{$b$}{b}}
+
+One can also analyze how changes in $A$ affect $x$:
+\[
+(A + \Delta A)x = b + \Delta b,
+\]
+and obtain similar bounds involving $K(A)$. For instance, if
+\(
+\|\Delta A\| \le \varepsilon \|A\|
+\)
+and
+\(
+\|\Delta b\| \le \delta \|b\|,
+\)
+then
+\[
+\frac{\|x - x_{\mathrm{exact}}\|}{\|x_{\mathrm{exact}}\|}
+= O\bigl(K(A)(\varepsilon + \delta)\bigr).
+\]
+
+\subsection*{Examples of Ill-Conditioned Problems}
+
+\begin{itemize}
+    \item \textbf{Hilbert matrix}: $H_n$ is famously ill-conditioned. For $n=20$, $K(H_{20})$ can be on the order of $10^{18}$ or more.
+\end{itemize}
+
+\subsection*{Unitary/Orthogonal Matrices}
+
+A matrix $Q \in \mathbb{C}^{n\times n}$ is \emph{unitary} if $Q^* Q = I$. (Real case: orthogonal, $Q^T Q = I$.) 
+
+Key properties:
+\[
+\|Qx\| = \|x\|,\quad
+\|Q A\| = \|A\|,
+\]
+and $\|Q^T A Q\|$ is also the same as $\|A\|$ for certain norms. 
+
+\subsection*{Singular Value Decomposition (SVD)}
+
+For a general $m\times n$ matrix $A$, the SVD is
+\[
+A = U \,\Sigma \,V^*,
+\]
+where:
+\begin{itemize}
+    \item $U \in \mathbb{C}^{m\times m}$ is unitary (left singular vectors),
+    \item $V \in \mathbb{C}^{n\times n}$ is unitary (right singular vectors),
+    \item $\Sigma$ is diagonal (in a rectangular sense) with nonnegative real entries $\sigma_1 \ge \sigma_2 \ge \dots \ge 0$ (the singular values).
+\end{itemize}
+Then
+\[
+\|A\|_2 = \sigma_1,
+\quad
+\|A^{-1}\|_2 = \frac{1}{\sigma_{\min}}\text{ (if $A$ is invertible).}
+\]
+Hence $K(A) = \frac{\sigma_{\max}}{\sigma_{\min}}$ for the 2-norm.
+
+\subsection*{SVD Facts}
+
+\begin{itemize}
+    \item $\mathrm{rank}(A)$ equals the number of nonzero singular values.
+    \item Best rank-$k$ approximation of $A$ is obtained by truncating the SVD to its top $k$ singular values/vectors. (Eckart--Young--Mirsky theorem.)
+    \item In data analysis or computer vision (point-cloud alignment), the SVD is used to solve orthogonal Procrustes problems.
+\end{itemize}
+
+\subsection*{Regularization for Ill-Posed Problems}
+
+If $A$ is ill-conditioned (large $K(A)$), one technique is to \emph{regularize}, e.g. solve
+\[
+(A + \alpha I)x = b,
+\]
+which reduces the condition number but introduces bias. We choose $\alpha$ to balance error vs. stability.
+
+\subsection*{Summary}
+
+\begin{itemize}
+    \item Condition numbers measure how changes (or errors) in $b$ or $A$ affect the solution $x$.
+    \item Large $K(A)$ means the problem is ill-conditioned, so small changes cause large solution errors.
+    \item Orthogonal/unitary matrices have condition number 1 (they are perfectly conditioned).
+    \item SVD is a powerful tool for analyzing and approximating matrices.
+    \item Regularization helps when $K(A)$ is extremely large, trading some bias for greater numerical stability.
+\end{itemize}
