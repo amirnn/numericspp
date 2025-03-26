@@ -1,0 +1,3 @@
+[submodule "libs/numerics-mit"]
+	path = libs/numerics-mit
+	url = https://github.com/mitmath/18335.git

@@ -1,0 +1,12 @@
+# platform
+.DS_Store
+
+# IDE
+.vscode
+
+
+# build
+/build/
+/out/
+/.cache/
+

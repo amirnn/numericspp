@@ -1,0 +1,87 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{hyperref}
+
+\begin{document}
+
+\title{18.335 / 18.4300 \\ Introduction to Numerical Methods}
+\author{Lecture 1 Notes (Typed Version)}
+\date{}
+\maketitle
+
+\section*{Course Overview}
+\begin{itemize}
+    \item Handouts, syllabus, psets, etc.
+    \item Canvas + Piazza + Gradescope
+    \item \url{https://github.com/mitmath/18335}
+    \item \textit{Optional Julia tutorial this Friday (Feb. ??), 4--5:30pm @ 2-190}
+    \item Parallel course this semester by Prof. Johnson: \textit{18.3?? Interdisciplinary Numerical Methods}
+\end{itemize}
+
+\noindent
+\textbf{Numerical analysis} is:
+\begin{itemize}
+    \item Fast algorithms for approximating solutions to mathematical problems (with attention to accuracy).
+    \item Tools for confirming that the math behind these algorithms works.
+\end{itemize}
+
+\section*{Example: Solve Nonlinear Equations}
+We want to find $x^*$ such that $f(x^*) = 0$ for a function $f: \mathbb{R} \to \mathbb{R}$.
+
+\subsubsection*{Bisection Method (Naive Approach)}
+\begin{itemize}
+    \item If $f(a)$ and $f(b)$ have opposite signs, then there is a root in $[a, b]$.
+    \item Repeatedly bisect the interval until the remaining segment is sufficiently small.
+\end{itemize}
+
+\subsubsection*{Secant Method}
+A faster alternative to bisection:
+\begin{enumerate}
+    \item Approximate $f(x)$ near $x_n$ by a straight line, using $f(x_n)$ and $f(x_{n-1})$.
+    \item Solve that linear approximation $f(x) \approx 0$ for $x$ to get the next guess $x_{n+1}$.
+\end{enumerate}
+Formally,
+\[
+f(x) \approx f(x_n) + \frac{f(x_n) - f(x_{n-1})}{x_n - x_{n-1}} \, (x - x_n),
+\]
+which, upon setting $f(x) = 0$, yields the update
+\[
+x_{n+1} = x_n - f(x_n) \cdot \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1})}.
+\]
+This often converges faster than bisection, typically with a rate related to the golden ratio ($\approx 1.618$).
+
+\section*{Numerical Analysis Scope}
+We deal with:
+\begin{itemize}
+    \item Nonlinear equations
+    \item Data interpolation / approximation
+    \item Linear algebra (solving $A x = b$, eigenvalue problems, etc.)
+    \item Numerical differentiation and integration
+    \item Partial Differential Equations (PDEs)
+\end{itemize}
+
+\subsubsection*{Examples}
+\begin{itemize}
+    \item \textbf{Poisson equation:}
+    \[
+    \Delta u = \frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} = f,
+    \quad u\big|_{\partial \Omega} = 0.
+    \]
+    Discretizing with finite differences leads to $A\mathbf{u} = \mathbf{b}$.
+
+    \item \textbf{Schr\"{o}dinger equation:}
+    \[
+    -\Delta u + V\,u = E\,u,
+    \]
+    which, when discretized, becomes a large eigenvalue problem.
+\end{itemize}
+
+\section*{Outline}
+\begin{itemize}
+    \item Fundamentals of numerical linear algebra (condition numbers, stability, efficiency, etc.)
+    \item Nonlinear optimization
+    \item Numerical integration, FFT, and other topics
+\end{itemize}
+
+\end{document}
