@@ -1,6 +1,6 @@
 \documentclass[12pt]{article}
 \usepackage[margin=1in]{geometry}
-\usepackage{amsmath, amssymb}
+\usepackage{amsmath,amssymb}
 \usepackage{hyperref}
 
 \begin{document}
@@ -27,61 +27,63 @@
 \end{itemize}
 
 \section*{Example: Solve Nonlinear Equations}
-We want to find $x^*$ such that $f(x^*) = 0$ for a function $f: \mathbb{R} \to \mathbb{R}$.
+We want to find a solution $x^*$ of $f(x^*) = 0$, for some function $f: \mathbb{R} \to \mathbb{R}$.
 
 \subsubsection*{Bisection Method (Naive Approach)}
 \begin{itemize}
     \item If $f(a)$ and $f(b)$ have opposite signs, then there is a root in $[a, b]$.
-    \item Repeatedly bisect the interval until the remaining segment is sufficiently small.
+    \item Keep bisecting the interval until its length is sufficiently small.
 \end{itemize}
 
-\subsubsection*{Secant Method}
-A faster alternative to bisection:
+\subsubsection*{Secant Method (Faster Alternative)}
 \begin{enumerate}
     \item Approximate $f(x)$ near $x_n$ by a straight line, using $f(x_n)$ and $f(x_{n-1})$.
-    \item Solve that linear approximation $f(x) \approx 0$ for $x$ to get the next guess $x_{n+1}$.
+    \item Solve that linear approximation $f(x) \approx 0$ for $x$ to get $x_{n+1}$.
 \end{enumerate}
 Formally,
 \[
-f(x) \approx f(x_n) + \frac{f(x_n) - f(x_{n-1})}{x_n - x_{n-1}} \, (x - x_n),
+f(x) \;\approx\; f(x_n) + \frac{f(x_n) - f(x_{n-1})}{x_n - x_{n-1}} (x - x_n),
 \]
-which, upon setting $f(x) = 0$, yields the update
+which, upon setting $f(x) = 0$, yields:
 \[
-x_{n+1} = x_n - f(x_n) \cdot \frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1})}.
+x_{n+1} 
+= x_n 
+- f(x_n)\,\frac{x_n - x_{n-1}}{f(x_n) - f(x_{n-1})}.
 \]
-This often converges faster than bisection, typically with a rate related to the golden ratio ($\approx 1.618$).
+\textit{Often converges faster than bisection.}
 
 \section*{Numerical Analysis Scope}
+
 We deal with:
 \begin{itemize}
     \item Nonlinear equations
-    \item Data interpolation / approximation
+    \item Data interpolation/approximation
     \item Linear algebra (solving $A x = b$, eigenvalue problems, etc.)
     \item Numerical differentiation and integration
     \item Partial Differential Equations (PDEs)
 \end{itemize}
 
-\subsubsection*{Examples}
+\subsection*{Examples}
 \begin{itemize}
-    \item \textbf{Poisson equation:}
+    \item \textbf{Poisson Equation:}
     \[
-    \Delta u = \frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2} = f,
-    \quad u\big|_{\partial \Omega} = 0.
+      \Delta u \;=\; \frac{\partial^2 u}{\partial x^2} 
+      \;+\; \frac{\partial^2 u}{\partial y^2} 
+      = f,\quad u\big|_{\partial \Omega} = 0.
     \]
-    Discretizing with finite differences leads to $A\mathbf{u} = \mathbf{b}$.
-
-    \item \textbf{Schr\"{o}dinger equation:}
+    Discretizing this with finite differences yields a large linear system $A\mathbf{u} = \mathbf{b}$.
+    \item \textbf{Schr\"odinger Equation:}
     \[
-    -\Delta u + V\,u = E\,u,
+      -\Delta u \;+\; V\,u = E\,u,
     \]
-    which, when discretized, becomes a large eigenvalue problem.
+    leading to large eigenvalue problems when discretized.
 \end{itemize}
 
 \section*{Outline}
 \begin{itemize}
     \item Fundamentals of numerical linear algebra (condition numbers, stability, efficiency, etc.)
     \item Nonlinear optimization
-    \item Numerical integration, FFT, and other topics
+    \item Other topics: numerical integration, FFT, etc.
 \end{itemize}
 
 \end{document}
