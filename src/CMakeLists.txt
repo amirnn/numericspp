@@ -1,0 +1,9 @@
+cmake_minimum_required(VERSION 3.31.0)
+
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+set(TARGET_NAME "playground")
+add_executable(${TARGET_NAME})
+target_sources(${TARGET_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
