@@ -1,0 +1,60 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{hyperref}
+
+\begin{document}
+
+\title{18.335 / 18.4300 \\ Introduction to Numerical Methods}
+\author{Lecture 3 Notes (Typed Version)}
+\date{}
+\maketitle
+
+\section*{Overview}
+% Replace the text below with the actual Lecture 3 content after OCR / reading.
+In this lecture, we continue discussing floating-point arithmetic and delve into more advanced aspects of numerical linear algebra. Topics may include:
+\begin{itemize}
+    \item More on backward stability
+    \item Condition numbers in depth
+    \item Special matrix decompositions (e.g., LU decomposition, Cholesky factorization)
+\end{itemize}
+
+\section*{Key Definitions and Concepts}
+\begin{itemize}
+    \item \textbf{Condition Number:} The ratio of relative output error to relative input error, often denoted $\kappa(A)$ for a matrix $A$.
+    \item \textbf{Backward Error:} The minimal data perturbation that would make the computed solution exact for the perturbed problem.
+    \item \textbf{Forward Error:} The difference between the computed solution and the true solution, measured in some norm.
+\end{itemize}
+
+\section*{LU Decomposition}
+Suppose we have a matrix $A$. Under conditions (like nonsingularity of certain submatrices), $A$ can be factored as 
+\[
+A = L U,
+\]
+where $L$ is lower triangular (often with 1s on the diagonal) and $U$ is upper triangular.
+
+\subsection*{Gaussian Elimination}
+\begin{itemize}
+    \item We systematically eliminate variables to convert $A$ into an upper-triangular form.
+    \item The multipliers used in elimination populate $L$.
+\end{itemize}
+
+\noindent
+\textbf{Partial Pivoting} is often used for numerical stability. 
+
+\section*{Other Notes}
+\begin{itemize}
+    \item Additional details regarding pivoting strategies
+    \item Rounding error considerations in matrix factorizations
+    \item Case studies for well-conditioned vs. ill-conditioned systems
+\end{itemize}
+
+\section*{Summary}
+This lecture emphasized:
+\begin{itemize}
+    \item The interplay between floating-point arithmetic and linear algebra
+    \item How matrix decompositions relate to backward error analysis
+    \item Why pivoting is crucial for stable Gaussian elimination
+\end{itemize}
+
+\end{document}
