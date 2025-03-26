@@ -1,0 +1,164 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{hyperref}
+
+\begin{document}
+
+\title{18.335 / 18.4300 \\ Introduction to Numerical Methods}
+\author{Lecture 2 Notes (Typed Version)}
+\date{}
+\maketitle
+
+\section*{Fundamentals of Numerical Analysis}
+
+\subsection*{Topics for Today}
+\begin{itemize}
+    \item Floating-point arithmetic
+    \item Backward error analysis
+    \item Continuation of the numerical linear algebra overview
+\end{itemize}
+
+We want to do linear algebra on computers. The first step is understanding how numbers are represented and how arithmetic is performed.
+
+\subsection*{Challenge}
+\[
+\mathbb{R} \text{ is unbounded and (conceptually) continuous,}
+\]
+while computers are discrete systems with finite memory.
+
+\subsection*{Idea 1: Fixed-Point Numbers}
+We discretize $\mathbb{R}$ into evenly spaced points:
+\[
+\ldots, -2h, -h, 0, h, 2h, \ldots
+\]
+Then round any real $x$ to the nearest of these points. 
+
+\noindent
+Pros:
+\begin{itemize}
+    \item Absolute rounding error can be small.
+\end{itemize}
+
+\noindent
+Cons:
+\begin{itemize}
+    \item Not suitable for very large or very small numbers.
+    \item Easily overflows or underflows.
+\end{itemize}
+
+\subsection*{Idea 2: Floating-Point Numbers}
+We mimic scientific notation:
+\[
+x = \pm\, m \times B^e,
+\]
+where $B$ is the base (often $2$ on binary computers), $m$ (the \emph{mantissa}) satisfies $1 \le m < B$, and $e$ is an integer exponent within a certain range. The integer part plus fractional part define a certain precision~$t$.
+
+\begin{itemize}
+    \item \textbf{Normalized representation:} the mantissa $m$ is in $[1,B)$ (for $m \neq 0$).
+    \item \textbf{Exponent range:} $e_{\min} \le e \le e_{\max}$.
+\end{itemize}
+
+\subsubsection*{Example (IEEE Standards)}
+\begin{itemize}
+    \item \textbf{Single precision (float32)}: 
+    \[
+      1 \text{ sign bit},\, 8 \text{ exponent bits},\, 23 \text{ fraction bits}.
+    \]
+    \item \textbf{Double precision (float64)}:
+    \[
+      1 \text{ sign bit},\, 11 \text{ exponent bits},\, 52 \text{ fraction bits}.
+    \]
+\end{itemize}
+
+\subsection*{Floating-Point Numbers are Not Equally Spaced}
+\[
+\text{As the exponent } e \text{ changes, spacing changes.}
+\]
+
+Define $\varepsilon_{\text{mach}}$ (the machine epsilon) as roughly the gap between $1.0$ and the next larger representable floating-point number. This is closely related to rounding error.
+
+\section*{Rounding}
+Typically, we round a real number $x$ to the nearest floating-point number (ties to even, etc.). We denote this rounding operation by \(\mathrm{fl}(x)\). The resulting relative error is at most on the order of $\varepsilon_{\text{mach}}$.
+
+\[
+\mathrm{fl}(x) = x(1 + \delta), \quad \text{with }|\delta| \le \varepsilon_{\text{mach}}.
+\]
+
+\section*{Floating-Point Arithmetic Model}
+
+Let $*$ be one of $+,-,\times,\div$. Then the floating-point result is
+\[
+x *_{\mathrm{fl}} y = \mathrm{fl}(x * y).
+\]
+Using a simple \emph{standard model}:
+\[
+x *_{\mathrm{fl}} y = (x * y)(1 + \delta),
+\quad |\delta| \le \varepsilon_{\text{mach}}.
+\]
+
+In practice, arithmetic operations are \emph{non-associative} in floating-point due to rounding:
+\[
+(x + y) + z \neq x + (y + z).
+\]
+
+\subsection*{Example: Catastrophic Cancellation}
+Subtraction of nearly equal numbers can lose significant digits.
+
+\section*{Rounding Error Analysis}
+
+\subsection*{Inner Product (Naive Summation)}
+Consider $S = x^T y = \sum_{i=1}^n x_i y_i$. A naive summation algorithm might do
+\[
+S_1 = \mathrm{fl}(x_1y_1),\quad
+S_2 = \mathrm{fl}(S_1 + \mathrm{fl}(x_2y_2)),\;\dots\;
+S_n = \mathrm{fl}(S_{n-1} + \mathrm{fl}(x_ny_n)).
+\]
+Each operation introduces at most one factor of $(1 + \delta_i)$, with $|\delta_i| \le \varepsilon_{\mathrm{mach}}$. This leads to an accumulation of errors on the order of $n\,\varepsilon_{\mathrm{mach}}$.
+
+\subsection*{Error Bounds}
+By a standard lemma,
+\[
+S_n = x^T y\,(1 + \theta_n),
+\quad
+|\theta_n| \le (n-1)\,\varepsilon_{\mathrm{mach}}.
+\]
+This is a worst-case bound (linear in $n$).
+
+\subsection*{Improved Summation Techniques}
+\begin{itemize}
+    \item \textbf{Kahan (compensated) summation} 
+    \item \textbf{Pairwise summation} (recursive approach)
+\end{itemize}
+These can reduce floating-point error and improve accuracy.
+
+\section*{Backward \& Forward Error}
+
+\subsection*{Backward Error}
+We often measure algorithmic quality by asking: does the computed result \emph{exactly} solve a slightly perturbed problem? If yes, the \emph{backward error} is the size of that perturbation. A \textbf{backward stable} algorithm has a very small backward error.
+
+\subsection*{Forward Error}
+Forward error compares the computed solution \(\widetilde{x}\) directly with the exact solution \(x\), e.g., via relative error \(\|x - \widetilde{x}\|/\|x\|\).
+
+\subsubsection*{Condition Number}
+\[
+\text{Forward error} \;\le\; \text{(Condition Number)} \times \text{Backward error}.
+\]
+
+Hence a small backward error and a well-conditioned problem often implies small forward error.
+
+\subsection*{Examples}
+\begin{itemize}
+    \item Inner product summation can be shown to be \emph{numerically stable}, i.e.\ the forward error is reasonable.
+    \item Outer product can also be shown to have a small backward error, so it is numerically stable under certain conditions.
+\end{itemize}
+
+\section*{Summary}
+\begin{itemize}
+    \item Floating-point numbers approximate real numbers with finite precision.
+    \item Round-off errors accumulate in arithmetic; the standard model assumes each operation introduces a small relative error.
+    \item Backward error analysis helps us see if an algorithm “works exactly” for a slightly perturbed input.
+    \item Forward errors relate to both backward error and problem conditioning.
+\end{itemize}
+
+\end{document}
