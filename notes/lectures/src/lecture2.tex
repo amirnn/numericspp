@@ -12,153 +12,149 @@
 
 \section*{Fundamentals of Numerical Analysis}
 
-\subsection*{Topics for Today}
-\begin{itemize}
-    \item Floating-point arithmetic
-    \item Backward error analysis
-    \item Continuation of the numerical linear algebra overview
-\end{itemize}
+\textbf{Today:} Floating-point arithmetic and backward error analysis. \\
+(\textit{Also a brief review/overview of numerical linear algebra (NLA).})
 
-We want to do linear algebra on computers. The first step is understanding how numbers are represented and how arithmetic is performed.
+\subsection*{Motivation}
 
-\subsection*{Challenge}
+To do linear algebra on computers, we first must understand how numbers are stored and arithmetic is done. The challenge:
 \[
 \mathbb{R} \text{ is unbounded and (conceptually) continuous,}
 \]
-while computers are discrete systems with finite memory.
+while computers are \emph{discrete} and have \emph{finite memory}.
 
-\subsection*{Idea 1: Fixed-Point Numbers}
+\section*{Fixed-Point Numbers (Idea 1)}
+
 We discretize $\mathbb{R}$ into evenly spaced points:
 \[
-\ldots, -2h, -h, 0, h, 2h, \ldots
+\cdots, -2h, -h, 0, h, 2h, \cdots.
 \]
-Then round any real $x$ to the nearest of these points. 
+Then map a real number $x$ to the nearest such point.
+
+\begin{itemize}
+    \item Pros: Absolute rounding error can be small for numbers within range.
+    \item Cons: Not suitable for representing very large or very small numbers; overflow/underflow can occur easily.
+\end{itemize}
+
+\section*{Floating-Point Numbers (Idea 2)}
+
+Mimic scientific notation:
+\[
+x \;=\; \pm \, m \times B^e,
+\]
+where $B$ is the \emph{base} (commonly $2$ on binary computers), $m$ (mantissa) satisfies $1 \le m < B$ (for normalized representation), and $e$ is an integer within some finite exponent range $[e_{\min},\, e_{\max}]$.
+
+\subsection*{IEEE Floating-Point (Examples)}
+
+\begin{itemize}
+    \item \textbf{Single Precision (float32):} 1 sign bit, 8 exponent bits, 23 fraction bits.
+    \item \textbf{Double Precision (float64):} 1 sign bit, 11 exponent bits, 52 fraction bits.
+\end{itemize}
 
 \noindent
-Pros:
-\begin{itemize}
-    \item Absolute rounding error can be small.
-\end{itemize}
+Hence, floating-point numbers are \emph{not} equally spaced; the gap between representable numbers depends on $e$.
 
-\noindent
-Cons:
-\begin{itemize}
-    \item Not suitable for very large or very small numbers.
-    \item Easily overflows or underflows.
-\end{itemize}
+\section*{Machine Epsilon \texorpdfstring{($\varepsilon_{\mathrm{mach}}$)}{}}
 
-\subsection*{Idea 2: Floating-Point Numbers}
-We mimic scientific notation:
+Define $\varepsilon_{\mathrm{mach}}$ to be (roughly) the distance between $1.0$ and the next representable number in the floating-point system. This measures the scale of rounding errors. For binary IEEE floating point:
 \[
-x = \pm\, m \times B^e,
+\varepsilon_{\mathrm{mach}} = 2^{-t+1},
 \]
-where $B$ is the base (often $2$ on binary computers), $m$ (the \emph{mantissa}) satisfies $1 \le m < B$, and $e$ is an integer exponent within a certain range. The integer part plus fractional part define a certain precision~$t$.
-
-\begin{itemize}
-    \item \textbf{Normalized representation:} the mantissa $m$ is in $[1,B)$ (for $m \neq 0$).
-    \item \textbf{Exponent range:} $e_{\min} \le e \le e_{\max}$.
-\end{itemize}
-
-\subsubsection*{Example (IEEE Standards)}
-\begin{itemize}
-    \item \textbf{Single precision (float32)}: 
-    \[
-      1 \text{ sign bit},\, 8 \text{ exponent bits},\, 23 \text{ fraction bits}.
-    \]
-    \item \textbf{Double precision (float64)}:
-    \[
-      1 \text{ sign bit},\, 11 \text{ exponent bits},\, 52 \text{ fraction bits}.
-    \]
-\end{itemize}
-
-\subsection*{Floating-Point Numbers are Not Equally Spaced}
-\[
-\text{As the exponent } e \text{ changes, spacing changes.}
-\]
-
-Define $\varepsilon_{\text{mach}}$ (the machine epsilon) as roughly the gap between $1.0$ and the next larger representable floating-point number. This is closely related to rounding error.
-
-\section*{Rounding}
-Typically, we round a real number $x$ to the nearest floating-point number (ties to even, etc.). We denote this rounding operation by \(\mathrm{fl}(x)\). The resulting relative error is at most on the order of $\varepsilon_{\text{mach}}$.
-
-\[
-\mathrm{fl}(x) = x(1 + \delta), \quad \text{with }|\delta| \le \varepsilon_{\text{mach}}.
-\]
+where $t$ is the number of fraction bits (if normalized).
 
 \section*{Floating-Point Arithmetic Model}
 
-Let $*$ be one of $+,-,\times,\div$. Then the floating-point result is
+For an operation $*$ in $\{+,\,-,\,\times,\,\div\}$,
 \[
-x *_{\mathrm{fl}} y = \mathrm{fl}(x * y).
+x \;*_{\mathrm{fl}}\; y \;=\; \mathrm{fl}(x * y) \;=\; (x * y)\,\bigl(1 + \delta\bigr),
+\quad
+|\delta| \le \varepsilon_{\mathrm{mach}}.
 \]
-Using a simple \emph{standard model}:
-\[
-x *_{\mathrm{fl}} y = (x * y)(1 + \delta),
-\quad |\delta| \le \varepsilon_{\text{mach}}.
-\]
+This standard model implies:
 
-In practice, arithmetic operations are \emph{non-associative} in floating-point due to rounding:
-\[
-(x + y) + z \neq x + (y + z).
-\]
-
-\subsection*{Example: Catastrophic Cancellation}
-Subtraction of nearly equal numbers can lose significant digits.
+\begin{itemize}
+    \item Rounding is non-associative:
+    \[
+      (x + y) + z \;\neq\; x + (y + z).
+    \]
+    \item Catastrophic cancellation occurs if $x \approx y$ and we compute $x - y$.
+\end{itemize}
 
 \section*{Rounding Error Analysis}
 
-\subsection*{Inner Product (Naive Summation)}
-Consider $S = x^T y = \sum_{i=1}^n x_i y_i$. A naive summation algorithm might do
-\[
-S_1 = \mathrm{fl}(x_1y_1),\quad
-S_2 = \mathrm{fl}(S_1 + \mathrm{fl}(x_2y_2)),\;\dots\;
-S_n = \mathrm{fl}(S_{n-1} + \mathrm{fl}(x_ny_n)).
-\]
-Each operation introduces at most one factor of $(1 + \delta_i)$, with $|\delta_i| \le \varepsilon_{\mathrm{mach}}$. This leads to an accumulation of errors on the order of $n\,\varepsilon_{\mathrm{mach}}$.
+\subsection*{Example: Inner Product}
 
-\subsection*{Error Bounds}
-By a standard lemma,
+Consider $u^T v = \sum_{i=1}^n u_i v_i$. A \emph{naive summation} does
 \[
-S_n = x^T y\,(1 + \theta_n),
+S_1 = \mathrm{fl}(u_1 v_1), \quad
+S_2 = \mathrm{fl}\bigl(S_1 + \mathrm{fl}(u_2 v_2)\bigr), \;\dots,\;
+S_n = \mathrm{fl}\bigl(S_{n-1} + \mathrm{fl}(u_n v_n)\bigr).
+\]
+Each operation introduces a factor of $(1 + \delta_i)$, with $|\delta_i| \le \varepsilon_{\mathrm{mach}}$. Summing up $n$ times yields a worst-case error on the order of $n\,\varepsilon_{\mathrm{mach}}$.
+
+\begin{itemize}
+    \item By a standard lemma, the final result satisfies:
+    \[
+      S_n = \bigl(u^T v\bigr)\,\bigl(1 + \theta_n\bigr), 
+      \quad
+      |\theta_n| \le (n-1)\,\varepsilon_{\mathrm{mach}}.
+    \]
+    \item \textbf{Alternative Summation Methods (e.g., Kahan summation)} can reduce error.
+\end{itemize}
+
+\section*{Backward \& Forward Errors}
+
+\begin{itemize}
+    \item \textbf{Backward Error} asks: does our computed result $\widetilde{x}$ solve \emph{exactly} a slightly perturbed problem $f(x + \Delta x) = 0$?
+    \item \textbf{Forward Error} compares $\widetilde{x}$ directly to the exact solution $x^*$ of the original problem.
+\end{itemize}
+
+\subsubsection*{Definitions}
+\[
+\text{Relative forward error} = \frac{\|\widetilde{x} - x^*\|}{\|x^*\|}, 
 \quad
-|\theta_n| \le (n-1)\,\varepsilon_{\mathrm{mach}}.
+\text{Relative backward error} = \min \bigl\{\epsilon : \widetilde{x} \text{ solves } f(x+\Delta x)\text{ for }\|\Delta x\|\le \epsilon \|x\|\bigr\}.
 \]
-This is a worst-case bound (linear in $n$).
 
-\subsection*{Improved Summation Techniques}
+\noindent
+\textbf{Backward Stable:} $\widetilde{x}$ is the exact solution to a perturbed problem with $\|\Delta x\|$ on the order of $\varepsilon_{\mathrm{mach}}$. If the problem is well-conditioned, backward stability implies a small forward error.
+
+\section*{Examples}
+
 \begin{itemize}
-    \item \textbf{Kahan (compensated) summation} 
-    \item \textbf{Pairwise summation} (recursive approach)
+    \item \textbf{Inner product} is backward stable: 
+    \[
+      \mathrm{fl}(u^T v) = u^T v + \Delta (u^T v),
+      \quad
+      \|\Delta (u^T v)\| \le \mathrm{(small)} \times \|u^T v\|.
+    \]
+    \item \textbf{Outer product} is also backward stable (exercise).
 \end{itemize}
-These can reduce floating-point error and improve accuracy.
 
-\section*{Backward \& Forward Error}
+\section*{Why Backward Stability Implies Numerical Stability}
 
-\subsection*{Backward Error}
-We often measure algorithmic quality by asking: does the computed result \emph{exactly} solve a slightly perturbed problem? If yes, the \emph{backward error} is the size of that perturbation. A \textbf{backward stable} algorithm has a very small backward error.
+If the backward error is small (i.e., the algorithm solves a nearby problem \emph{exactly}), and if $f$ is well-conditioned, then the forward error is also small. 
 
-\subsection*{Forward Error}
-Forward error compares the computed solution \(\widetilde{x}\) directly with the exact solution \(x\), e.g., via relative error \(\|x - \widetilde{x}\|/\|x\|\).
+\begin{itemize}
+    \item \emph{Forward Error} $\le \; \text{(Condition Number)} \times \text{(Backward Error)}.$
+\end{itemize}
 
-\subsubsection*{Condition Number}
+\section*{Condition Number (Refresher)}
+
+For a function $f$ or a matrix problem $A x = b$,
 \[
-\text{Forward error} \;\le\; \text{(Condition Number)} \times \text{Backward error}.
+\kappa \;=\; \|A\| \,\|A^{-1}\|\quad
+\text{(for linear problems in some consistent norm).}
 \]
+Large $\kappa$ indicates sensitivity (ill-conditioning): small input changes can cause large output changes.
 
-Hence a small backward error and a well-conditioned problem often implies small forward error.
+\section*{Summary of Lecture 2}
 
-\subsection*{Examples}
 \begin{itemize}
-    \item Inner product summation can be shown to be \emph{numerically stable}, i.e.\ the forward error is reasonable.
-    \item Outer product can also be shown to have a small backward error, so it is numerically stable under certain conditions.
-\end{itemize}
-
-\section*{Summary}
-\begin{itemize}
-    \item Floating-point numbers approximate real numbers with finite precision.
-    \item Round-off errors accumulate in arithmetic; the standard model assumes each operation introduces a small relative error.
-    \item Backward error analysis helps us see if an algorithm “works exactly” for a slightly perturbed input.
-    \item Forward errors relate to both backward error and problem conditioning.
+    \item Floating-point arithmetic has finite precision and introduces rounding errors.
+    \item Catastrophic cancellation is a major concern when subtracting nearly equal numbers.
+    \item Backward error analysis helps us determine if an algorithm is effectively solving a nearby (perturbed) problem exactly.
+    \item Well-conditioned problems + backward-stable algorithms $\implies$ small forward error.
 \end{itemize}
 
 \end{document}
