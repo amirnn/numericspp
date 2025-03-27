@@ -7,6 +7,7 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/UseLATEX.cmake")
 add_latex_document(lectures/src/main.tex
     TARGET_NAME notes-numerics
     INPUTS
+    lectures/src/lecture1-solomon.tex
     lectures/src/lecture1.tex
     lectures/src/lecture2.tex
     lectures/src/lecture3.tex
