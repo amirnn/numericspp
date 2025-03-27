@@ -1,0 +1,118 @@
+\section*{Error Analysis}
+
+\begin{itemize}
+  \item \textbf{Forward Error} $\rightarrow$ Error that we cannot measure. ($x - \hat{x}$)
+  \item \textbf{Backward Error} $\rightarrow$ Error we can measure. ($f(x) - f(\hat{x})$)
+\end{itemize}
+
+When we can bound our error (forward error) using backward error, we have a well-conditioned problem.
+
+\subsection*{Conditioning}
+
+Condition value: $\approx$ $slope^{-1}$
+
+\begin{equation}
+  CV \approx \frac{1}{f'(x)}
+\end{equation}
+
+Hence, the higher the slope of a function, the better our problem conditioning. Meaning, less is better.
+
+\subsection*{An Interesting Problem}
+
+An interesting problem is numerical analysis is when we want to calculate sum of some variables with high range of variation.
+In such a case it can happen that we get to a different result depending on whether we start from front or back of the array.
+This can be due to rounding characteristic of floating value in computer. The solutions for this problem are very interesting.
+
+\begin{enumerate}
+  \item Firstly, one can think of sorting the arrays first and then summing them up starting from smaller values so that their values accumulate
+    and do not get rounded off.
+  \item Another options is to use the resources we have in computer i.e. computation power and memory. In this case we use memory to save a running
+    value and its respective error. This is the basis for the Kahan summation algorithm.
+\end{enumerate}
+
+Now suppose we want to calculate the inner product of two vectors. This seemingly easy task, requires us to think differently, in the
+numerical algorithm realm.
+
+However, this leads to a few important observations. Summation typically involves values of similar magnitude, whereas multiplication and
+division often occur between values with significantly different scales.
+
+\section*{An refresher on Linear Algebra}
+
+Here is a Matrix:
+
+\begin{itemize}
+  \item Completely Determined - Equation is solvable
+    \begin{equation*}
+      \begin{pmatrix}
+        1 & 0 \\
+        1 & 1
+      \end{pmatrix}
+      \times
+      \begin{pmatrix}
+        x \\
+        y
+      \end{pmatrix} =
+      \begin{pmatrix}
+        1 \\
+        2
+      \end{pmatrix}
+    \end{equation*}
+  \item Under-determined
+    \begin{equation*}
+      \begin{pmatrix}
+        1 & 0 \\
+        1 & 0
+      \end{pmatrix}
+      \times
+      \begin{pmatrix}
+        x \\
+        y
+      \end{pmatrix}
+      =
+      \begin{pmatrix}
+        1 \\
+        1
+      \end{pmatrix}
+    \end{equation*}
+
+  \item Over-determined
+  \begin{equation*}
+    \begin{pmatrix}
+      1 & 0 \\
+      1 & 1
+    \end{pmatrix}
+    \times
+    \begin{pmatrix}
+      x \\
+      y
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+      1 \\
+      1
+    \end{pmatrix}
+  \end{equation*}
+\end{itemize}
+
+An important point in $ A \times \vec{x} = b $ is that the invertibility of $A$ does not directly lead to solvability of the equation 
+hence the later depends on $b$ as well.
+
+Also note that in the equation below $\epsilon$ has a very important role in determining the condition variable. Since $\epsilon$ can turn a non-invertible matrix
+to an invertible one (but ill-conditioned).
+
+\begin{equation*}
+  \begin{pmatrix}
+    1 & 0 \\
+    1 & \epsilon
+  \end{pmatrix}
+  \times
+  \begin{pmatrix}
+    x \\
+    y
+  \end{pmatrix}
+  =
+  \begin{pmatrix}
+    1 \\
+    2
+  \end{pmatrix}
+\end{equation*}
